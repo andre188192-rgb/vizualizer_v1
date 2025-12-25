@@ -31,3 +31,18 @@ class AxisTable(QTableWidget):
             for col_index, value in enumerate(row[1:], start=1):
                 self.setItem(row_index, col_index, QTableWidgetItem(value))
         self.resizeColumnsToContents()
+
+    def get_axis_config(self) -> list[dict[str, str | bool]]:
+        config: list[dict[str, str | bool]] = []
+        for row in range(self.rowCount()):
+            active_item = self.item(row, 0)
+            config.append(
+                {
+                    "active": active_item.checkState() == Qt.Checked if active_item else False,
+                    "axis": self.item(row, 1).text() if self.item(row, 1) else "",
+                    "type": self.item(row, 2).text() if self.item(row, 2) else "",
+                    "min": self.item(row, 3).text() if self.item(row, 3) else "0",
+                    "max": self.item(row, 4).text() if self.item(row, 4) else "0",
+                }
+            )
+        return config

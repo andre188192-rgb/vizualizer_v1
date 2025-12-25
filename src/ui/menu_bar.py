@@ -5,6 +5,11 @@ from typing import Optional
 from PyQt5.QtWidgets import QAction, QMainWindow
 
 
+def _register_action(actions: dict[str, QAction], key: str, action: QAction) -> QAction:
+    actions[key] = action
+    return action
+
+
 def _action(
     window: QMainWindow,
     title: str,
@@ -20,6 +25,49 @@ def _action(
     return action
 
 
+def build_menu_bar(window: QMainWindow) -> dict[str, QAction]:
+    menu_bar = window.menuBar()
+    actions: dict[str, QAction] = {}
+
+    file_menu = menu_bar.addMenu("File")
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "new_project",
+            _action(window, "New Simulation", "Create a new simulation", "Ctrl+N"),
+        )
+    )
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "open_project",
+            _action(window, "Open Project", "Open a CNC project", "Ctrl+O"),
+        )
+    )
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "save_project",
+            _action(window, "Save Project", "Save the current project", "Ctrl+S"),
+        )
+    )
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "save_as",
+            _action(window, "Save As", "Save as a new project file", "Ctrl+Shift+S"),
+        )
+    )
+    file_menu.addSeparator()
+    file_menu.addAction(_action(window, "Recent Files", "View recent projects"))
+    file_menu.addSeparator()
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "exit",
+            _action(window, "Exit", "Exit the application", "Ctrl+Q"),
+        )
+    )
 def build_menu_bar(window: QMainWindow) -> None:
     menu_bar = window.menuBar()
 
@@ -54,6 +102,18 @@ def build_menu_bar(window: QMainWindow) -> None:
 
     simulation_menu = menu_bar.addMenu("Simulation")
     simulation_menu.addAction(
+        _register_action(
+            actions,
+            "play_pause",
+            _action(window, "Play/Pause", "Start or pause simulation", "Space"),
+        )
+    )
+    simulation_menu.addAction(
+        _register_action(
+            actions,
+            "stop_sim",
+            _action(window, "Stop", "Stop simulation", "Ctrl+Space"),
+        )
         _action(window, "Play/Pause", "Start or pause simulation", "Space")
     )
     simulation_menu.addAction(
@@ -72,3 +132,5 @@ def build_menu_bar(window: QMainWindow) -> None:
     help_menu.addAction(_action(window, "Documentation", "Open documentation", "F1"))
     help_menu.addAction(_action(window, "About", "About the application"))
     help_menu.addAction(_action(window, "Check for Updates", "Check for updates"))
+
+    return actions

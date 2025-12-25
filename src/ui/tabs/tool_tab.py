@@ -17,12 +17,15 @@ from ..widgets.preview_widget import PreviewWidget
 from ..widgets.tool_library import ToolLibrary
 
 
+def _library_group() -> tuple[QGroupBox, ToolLibrary]:
 def _library_group() -> QGroupBox:
     group = QGroupBox("Tool Library")
     layout = QVBoxLayout()
     search = QLineEdit()
     search.setPlaceholderText("Search tools...")
     layout.addWidget(search)
+    tool_list = ToolLibrary()
+    layout.addWidget(tool_list)
     layout.addWidget(ToolLibrary())
 
     button_row = QHBoxLayout()
@@ -32,6 +35,19 @@ def _library_group() -> QGroupBox:
     layout.addLayout(button_row)
 
     group.setLayout(layout)
+    return group, tool_list
+
+
+def _parameters_group() -> tuple[
+    QGroupBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QDoubleSpinBox,
+    QDoubleSpinBox,
+    QDoubleSpinBox,
+    QSpinBox,
+    QPushButton,
+]:
     return group
 
 
@@ -76,11 +92,23 @@ def _parameters_group() -> QGroupBox:
     layout.addLayout(form)
 
     button_row = QHBoxLayout()
+    apply_button = QPushButton("Apply")
+    button_row.addWidget(apply_button)
     button_row.addWidget(QPushButton("Apply"))
     button_row.addWidget(QPushButton("Save to Library"))
     layout.addLayout(button_row)
 
     group.setLayout(layout)
+    return (
+        group,
+        tool_type,
+        diameter,
+        length,
+        cutting,
+        shank,
+        flutes,
+        apply_button,
+    )
     return group
 
 
@@ -89,6 +117,33 @@ class ToolTab(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
+        self.library_group, self.tool_library = _library_group()
+        (
+            self.parameters_group,
+            self.tool_type,
+            self.diameter,
+            self.length,
+            self.cutting_length,
+            self.shank,
+            self.flutes,
+            self.apply_button,
+        ) = _parameters_group()
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.library_group)
+        layout.addWidget(self.parameters_group)
+        layout.addStretch()
+        self.setLayout(layout)
+
+    def get_tool_parameters(self) -> dict[str, float | str]:
+        return {
+            "type": self.tool_type.currentText(),
+            "diameter": self.diameter.value(),
+            "length": self.length.value(),
+            "cutting_length": self.cutting_length.value(),
+            "shank": self.shank.value(),
+            "flutes": self.flutes.value(),
+        }
         layout = QVBoxLayout()
         layout.addWidget(_library_group())
         layout.addWidget(_parameters_group())
