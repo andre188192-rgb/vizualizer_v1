@@ -144,13 +144,14 @@ class MachineController(QObject):
         self._emit_machine_state()
 
     def _emit_machine_state(self) -> None:
-        positions = {axis.name: self._axis_positions.get(axis.name, 0.0) for axis in self._axis_config if axis.active}
-        for axis, value in self._axis_positions.items():
-            positions.setdefault(axis, value)
-        positions = {axis.name: 0.0 for axis in self._axis_config if axis.active}
-        positions.setdefault("X", 0.0)
-        positions.setdefault("Y", 0.0)
-        positions.setdefault("Z", 0.0)
+        positions = dict(self._axis_positions)
+        for axis in self._axis_config:
+            if not axis.active:
+                positions.pop(axis.name, None)
+            else:
+                positions.setdefault(axis.name, 0.0)
+        if not positions:
+            positions = {"X": 0.0, "Y": 0.0, "Z": 0.0}
         self.machine_state_changed.emit(positions)
 
     def current_gcode(self) -> str:
