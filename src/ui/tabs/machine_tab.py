@@ -1,11 +1,15 @@
 """Machine configuration tab."""
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QCheckBox,
     QDoubleSpinBox,
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSlider,
     QPushButton,
     QVBoxLayout,
     QWidget,
@@ -59,6 +63,30 @@ def _axes_group() -> QGroupBox:
 
     group.setLayout(layout)
     return group, axis_table, save_button
+
+
+def _axis_position_group() -> tuple[QGroupBox, dict[str, QSlider], dict[str, QLabel]]:
+    group = QGroupBox("Axis Positions")
+    layout = QVBoxLayout()
+    sliders: dict[str, QSlider] = {}
+    labels: dict[str, QLabel] = {}
+
+    for axis, minimum, maximum in (("X", -250, 250), ("Y", -200, 200), ("Z", 0, 300)):
+        row = QHBoxLayout()
+        row.addWidget(QLabel(f"{axis}:"))
+        slider = QSlider(Qt.Horizontal)
+        slider.setMinimum(minimum)
+        slider.setMaximum(maximum)
+        slider.setValue(0)
+        value_label = QLabel("0")
+        row.addWidget(slider)
+        row.addWidget(value_label)
+        layout.addLayout(row)
+        sliders[axis] = slider
+        labels[axis] = value_label
+
+    group.setLayout(layout)
+    return group, sliders, labels
     button_row.addWidget(QPushButton("Save Config"))
     layout.addLayout(button_row)
 
@@ -89,11 +117,13 @@ class MachineTab(QWidget):
         super().__init__()
         self.dimensions_group, self.dimension_fields = _dimensions_group()
         self.axes_group, self.axis_table, self.apply_button = _axes_group()
+        self.axis_position_group, self.axis_sliders, self.axis_labels = _axis_position_group()
         self.structure_group = _structure_group()
 
         layout = QVBoxLayout()
         layout.addWidget(self.dimensions_group)
         layout.addWidget(self.axes_group)
+        layout.addWidget(self.axis_position_group)
         layout.addWidget(self.structure_group)
         layout.addStretch()
         self.setLayout(layout)

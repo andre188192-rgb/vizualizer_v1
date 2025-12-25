@@ -59,6 +59,7 @@ class MachineController(QObject):
         self._tool_params: Dict[str, float | str] = {}
         self._workpiece_params: Dict[str, float | str] = {}
         self._gcode_lines: List[str] = []
+        self._axis_positions: Dict[str, float] = {"X": 0.0, "Y": 0.0, "Z": 0.0}
         self._simulation_timer = QTimer()
         self._simulation_timer.setInterval(50)
         self._simulation_timer.timeout.connect(self._advance_simulation)
@@ -72,6 +73,11 @@ class MachineController(QObject):
             self._emit_machine_state()
         except ValidationError as exc:
             self.error_occurred.emit("Validation", str(exc))
+
+    def set_axis_position(self, axis: str, value: float) -> None:
+        if axis in self._axis_positions:
+            self._axis_positions[axis] = value
+            self._emit_machine_state()
 
     def apply_tool_parameters(self, params: Dict[str, float | str]) -> None:
         try:
@@ -138,6 +144,9 @@ class MachineController(QObject):
         self._emit_machine_state()
 
     def _emit_machine_state(self) -> None:
+        positions = {axis.name: self._axis_positions.get(axis.name, 0.0) for axis in self._axis_config if axis.active}
+        for axis, value in self._axis_positions.items():
+            positions.setdefault(axis, value)
         positions = {axis.name: 0.0 for axis in self._axis_config if axis.active}
         positions.setdefault("X", 0.0)
         positions.setdefault("Y", 0.0)

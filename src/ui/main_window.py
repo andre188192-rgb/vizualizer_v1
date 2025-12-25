@@ -29,6 +29,7 @@ from .tabs.settings_tab import SettingsTab
 from .tabs.simulation_tab import SimulationTab
 from .tabs.tool_tab import ToolTab
 from .tabs.workpiece_tab import WorkpieceTab
+from .widgets.gl_widget import GLWidget
 from .widgets.viewport_widget import ViewportWidget
 
 
@@ -60,6 +61,10 @@ class MainWindow(QMainWindow):
         self.controller = MachineController()
         self._connect_controller()
         self._connect_ui_actions()
+
+    def _build_viewport(self) -> QWidget:
+        self.gl_widget = GLWidget()
+        return self.gl_widget
         self.addDockWidget(Qt.RightDockWidgetArea, self._build_notifications_dock())
 
     def _build_viewport(self) -> QWidget:
@@ -115,6 +120,10 @@ class MainWindow(QMainWindow):
     def _connect_ui_actions(self) -> None:
         machine_tab = self._machine_tab()
         machine_tab.apply_button.clicked.connect(self._apply_axis_config)
+        for axis, slider in machine_tab.axis_sliders.items():
+            slider.valueChanged.connect(
+                lambda value, axis_name=axis: self._on_axis_slider_changed(axis_name, value)
+            )
 
         tool_tab = self._tool_tab()
         tool_tab.apply_button.clicked.connect(self._apply_tool_params)
@@ -227,6 +236,17 @@ class MainWindow(QMainWindow):
             f"{axis}: {value:.1f}" for axis, value in sorted(positions.items())
         )
         self.status_widgets.center.setText(axis_values)
+        machine_tab = self._machine_tab()
+        for axis, value in positions.items():
+            slider = machine_tab.axis_sliders.get(axis)
+            label = machine_tab.axis_labels.get(axis)
+            if slider:
+                slider.blockSignals(True)
+                slider.setValue(int(value))
+                slider.blockSignals(False)
+            if label:
+                label.setText(f"{value:.1f}")
+            self.gl_widget.set_axis_position(axis, float(value))
 
     def _on_gcode_loaded(self, count: int) -> None:
         self.notifications_widget.addItem(f"Info: Loaded {count} G-code commands")
@@ -234,6 +254,9 @@ class MainWindow(QMainWindow):
     def _show_error(self, title: str, message: str) -> None:
         self.notifications_widget.addItem(f"Error: {title} - {message}")
         QMessageBox.warning(self, title, message)
+
+    def _on_axis_slider_changed(self, axis: str, value: int) -> None:
+        self.controller.set_axis_position(axis, float(value))
 
     def _show_info(self, title: str, message: str) -> None:
         self.notifications_widget.addItem(f"Info: {title} - {message}")
