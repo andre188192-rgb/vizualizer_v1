@@ -10,6 +10,18 @@ from controller.machine_controller import AxisConfig, MachineController
 
 from .menu_bar import build_menu_bar
 from .status_bar import StatusBarWidgets, build_status_bar
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (
+    QDockWidget,
+    QListWidget,
+    QMainWindow,
+    QSplitter,
+    QTabWidget,
+    QWidget,
+)
+
+from .menu_bar import build_menu_bar
+from .status_bar import build_status_bar
 from .tool_bar import build_tool_bar
 from .tabs.gcode_tab import GCodeTab
 from .tabs.machine_tab import MachineTab
@@ -31,6 +43,9 @@ class MainWindow(QMainWindow):
         self.menu_actions = build_menu_bar(self)
         self.tool_actions = build_tool_bar(self)
         self.status_widgets = build_status_bar(self)
+        build_menu_bar(self)
+        build_tool_bar(self)
+        build_status_bar(self)
 
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self._build_viewport())
@@ -45,6 +60,7 @@ class MainWindow(QMainWindow):
         self.controller = MachineController()
         self._connect_controller()
         self._connect_ui_actions()
+        self.addDockWidget(Qt.RightDockWidgetArea, self._build_notifications_dock())
 
     def _build_viewport(self) -> QWidget:
         return ViewportWidget()
@@ -64,6 +80,12 @@ class MainWindow(QMainWindow):
         tabs.addTab(self.gcode_tab, "G-code Control")
         tabs.addTab(self.simulation_tab, "Simulation & Analysis")
         tabs.addTab(self.settings_tab, "Settings")
+        tabs.addTab(MachineTab(), "Machine Configuration")
+        tabs.addTab(ToolTab(), "Tool Management")
+        tabs.addTab(WorkpieceTab(), "Workpiece Setup")
+        tabs.addTab(GCodeTab(), "G-code Control")
+        tabs.addTab(SimulationTab(), "Simulation & Analysis")
+        tabs.addTab(SettingsTab(), "Settings")
         return tabs
 
     def _build_notifications_dock(self) -> QDockWidget:
@@ -219,3 +241,4 @@ class MainWindow(QMainWindow):
 
     def _new_project_stub(self) -> None:
         self._show_info("New Project", "Project creation is not implemented yet.")
+        return dock
