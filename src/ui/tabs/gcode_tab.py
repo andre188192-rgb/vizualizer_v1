@@ -15,14 +15,7 @@ from PyQt5.QtCore import Qt
 from ..widgets.gcode_editor import GCodeEditor
 
 
-def _editor_group() -> tuple[
-    QGroupBox,
-    QLineEdit,
-    QPushButton,
-    QPushButton,
-    QPushButton,
-    GCodeEditor,
-]:
+def _editor_group() -> QGroupBox:
     group = QGroupBox("Editor")
     layout = QVBoxLayout()
 
@@ -36,30 +29,19 @@ def _editor_group() -> tuple[
     search_row.addWidget(QPushButton("Find Next"))
     layout.addLayout(search_row)
 
-    editor = GCodeEditor()
-    layout.addWidget(editor)
+    layout.addWidget(GCodeEditor())
 
     button_row = QHBoxLayout()
-    load_button = QPushButton("Load File")
-    save_button = QPushButton("Save")
-    validate_button = QPushButton("Validate")
-    button_row.addWidget(load_button)
-    button_row.addWidget(save_button)
-    button_row.addWidget(validate_button)
+    button_row.addWidget(QPushButton("Load File"))
+    button_row.addWidget(QPushButton("Save"))
+    button_row.addWidget(QPushButton("Validate"))
     layout.addLayout(button_row)
 
     group.setLayout(layout)
-    return group, search, load_button, save_button, validate_button, editor
+    return group
 
 
-def _simulation_group() -> tuple[
-    QGroupBox,
-    QSlider,
-    QPushButton,
-    QPushButton,
-    QPushButton,
-    QSlider,
-]:
+def _simulation_group() -> QGroupBox:
     group = QGroupBox("Simulation Control")
     layout = QVBoxLayout()
 
@@ -72,12 +54,9 @@ def _simulation_group() -> tuple[
     layout.addLayout(speed_row)
 
     button_row = QHBoxLayout()
-    start_button = QPushButton("Start")
-    pause_button = QPushButton("Pause")
-    stop_button = QPushButton("Stop")
-    button_row.addWidget(start_button)
-    button_row.addWidget(pause_button)
-    button_row.addWidget(stop_button)
+    button_row.addWidget(QPushButton("Start"))
+    button_row.addWidget(QPushButton("Pause"))
+    button_row.addWidget(QPushButton("Stop"))
     layout.addLayout(button_row)
 
     progress_row = QHBoxLayout()
@@ -96,7 +75,7 @@ def _simulation_group() -> tuple[
     layout.addLayout(step_row)
 
     group.setLayout(layout)
-    return group, speed_slider, start_button, pause_button, stop_button, progress_slider
+    return group
 
 
 class GCodeTab(QWidget):
@@ -104,35 +83,8 @@ class GCodeTab(QWidget):
 
     def __init__(self) -> None:
         super().__init__()
-        (
-            self.editor_group,
-            self.search_input,
-            self.load_button,
-            self.save_button,
-            self.validate_button,
-            self.editor,
-        ) = _editor_group()
-        (
-            self.simulation_group,
-            self.speed_slider,
-            self.start_button,
-            self.pause_button,
-            self.stop_button,
-            self.progress_slider,
-        ) = _simulation_group()
-
         layout = QVBoxLayout()
-        layout.addWidget(self.editor_group)
-        layout.addWidget(self.simulation_group)
+        layout.addWidget(_editor_group())
+        layout.addWidget(_simulation_group())
         layout.addStretch()
         self.setLayout(layout)
-
-    def gcode_text(self) -> str:
-        return self.editor.toPlainText()
-
-    def set_gcode_text(self, text: str) -> None:
-        self.editor.setPlainText(text)
-
-    def set_progress(self, current: int, total: int) -> None:
-        self.progress_slider.setMaximum(max(total, 1))
-        self.progress_slider.setValue(current)
