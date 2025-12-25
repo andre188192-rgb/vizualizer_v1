@@ -1,5 +1,15 @@
 """Main window for the CNC Machine 3D Simulator Pro UI."""
 
+from pathlib import Path
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFileDialog, QListWidget, QMessageBox
+from PyQt5.QtWidgets import QDockWidget, QMainWindow, QSplitter, QTabWidget, QWidget
+
+from controller.machine_controller import AxisConfig, MachineController
+
+from .menu_bar import build_menu_bar
+from .status_bar import StatusBarWidgets, build_status_bar
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QDockWidget,

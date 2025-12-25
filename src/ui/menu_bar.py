@@ -30,6 +30,42 @@ def build_menu_bar(window: QMainWindow) -> dict[str, QAction]:
     actions: dict[str, QAction] = {}
 
     file_menu = menu_bar.addMenu("File")
+    new_action = _register_action(
+        actions,
+        "new_project",
+        _action(window, "New Simulation", "Create a new simulation", "Ctrl+N"),
+    )
+    file_menu.addAction(new_action)
+
+    open_action = _register_action(
+        actions,
+        "open_project",
+        _action(window, "Open Project", "Open a CNC project", "Ctrl+O"),
+    )
+    file_menu.addAction(open_action)
+
+    save_action = _register_action(
+        actions,
+        "save_project",
+        _action(window, "Save Project", "Save the current project", "Ctrl+S"),
+    )
+    file_menu.addAction(save_action)
+
+    save_as_action = _register_action(
+        actions,
+        "save_as",
+        _action(window, "Save As", "Save as a new project file", "Ctrl+Shift+S"),
+    )
+    file_menu.addAction(save_as_action)
+    file_menu.addSeparator()
+    file_menu.addAction(_action(window, "Recent Files", "View recent projects"))
+    file_menu.addSeparator()
+    exit_action = _register_action(
+        actions,
+        "exit",
+        _action(window, "Exit", "Exit the application", "Ctrl+Q"),
+    )
+    file_menu.addAction(exit_action)
     file_menu.addAction(
         _register_action(
             actions,
@@ -101,6 +137,19 @@ def build_menu_bar(window: QMainWindow) -> None:
     view_menu.addAction(_action(window, "Reset View", "Reset the camera", "F5"))
 
     simulation_menu = menu_bar.addMenu("Simulation")
+    play_pause = _register_action(
+        actions,
+        "play_pause",
+        _action(window, "Play/Pause", "Start or pause simulation", "Space"),
+    )
+    simulation_menu.addAction(play_pause)
+
+    stop_sim = _register_action(
+        actions,
+        "stop_sim",
+        _action(window, "Stop", "Stop simulation", "Ctrl+Space"),
+    )
+    simulation_menu.addAction(stop_sim)
     simulation_menu.addAction(
         _register_action(
             actions,
