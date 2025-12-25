@@ -1,0 +1,145 @@
+QMainWindow {
+    background-color: #1e1f26;
+    color: #f0f0f0;
+}
+
+QMenuBar {
+    background-color: #1b1c22;
+    color: #f0f0f0;
+}
+
+QMenuBar::item:selected {
+    background-color: #2a2c34;
+}
+
+QMenu {
+    background-color: #24262e;
+    color: #f0f0f0;
+}
+
+QToolBar {
+    background-color: #1b1c22;
+    border-bottom: 1px solid #2a2c34;
+}
+
+QStatusBar {
+    background-color: #1b1c22;
+    color: #f0f0f0;
+}
+
+QGroupBox {
+    border: 1px solid #3a3d48;
+    margin-top: 12px;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 6px;
+    color: #9fa3b2;
+}
+
+QLabel {
+    color: #f0f0f0;
+}
+
+QTabWidget::pane {
+    border: 1px solid #2a2c34;
+}
+
+QTabBar::tab {
+    background-color: #2a2c34;
+    color: #f0f0f0;
+    padding: 6px 10px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+QTabBar::tab:selected {
+    background-color: #3a3d48;
+}
+
+QPushButton {
+    background-color: #2d6cdf;
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+QPushButton:hover {
+    background-color: #3c7bff;
+}
+
+QPushButton:pressed {
+    background-color: #295fc2;
+}
+
+QLineEdit, QPlainTextEdit, QTableWidget, QListWidget, QComboBox, QSpinBox, QDoubleSpinBox {
+    background-color: #1b1c22;
+    color: #f0f0f0;
+    border: 1px solid #2a2c34;
+}
+
+QComboBox::drop-down {
+    border: none;
+}
+
+QSlider::groove:horizontal {
+    border: 1px solid #2a2c34;
+    height: 6px;
+    background: #2a2c34;
+}
+
+QSlider::handle:horizontal {
+    background: #2d6cdf;
+    border: 1px solid #2d6cdf;
+    width: 14px;
+    margin: -4px 0;
+    border-radius: 7px;
+}
+
+QProgressBar {
+    border: 1px solid #2a2c34;
+    border-radius: 4px;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: #2d6cdf;
+}
+
+#previewFrame {
+    background-color: #16171d;
+    border: 1px dashed #3a3d48;
+    border-radius: 8px;
+    min-height: 240px;
+}
+
+#previewTitle {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#previewSubtitle {
+    color: #9fa3b2;
+}
+
+#viewportFrame {
+    background-color: #14151b;
+    border: 1px solid #2a2c34;
+    border-radius: 8px;
+    min-height: 520px;
+}
+
+#viewportTitle {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+#viewportHint,
+#viewportOverlay {
+    color: #9fa3b2;
+}
