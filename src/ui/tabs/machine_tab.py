@@ -19,6 +19,10 @@ def _dimensions_group() -> tuple[QGroupBox, dict[str, QDoubleSpinBox]]:
     form = QFormLayout()
     fields: dict[str, QDoubleSpinBox] = {}
     for axis, value in (("X", 500.0), ("Y", 400.0), ("Z", 300.0)):
+def _dimensions_group() -> QGroupBox:
+    group = QGroupBox("Machine Envelope")
+    form = QFormLayout()
+    for axis, value in (("X (mm)", 500.0), ("Y (mm)", 400.0), ("Z (mm)", 300.0)):
         spin = QDoubleSpinBox()
         spin.setRange(0, 5000)
         spin.setValue(value)
@@ -35,6 +39,15 @@ def _axes_group() -> tuple[QGroupBox, AxisTable, QPushButton]:
     layout = QVBoxLayout()
     axis_table = AxisTable()
     layout.addWidget(axis_table)
+        form.addRow(axis, spin)
+    group.setLayout(form)
+    return group
+
+
+def _axes_group() -> QGroupBox:
+    group = QGroupBox("Axis Configuration")
+    layout = QVBoxLayout()
+    layout.addWidget(AxisTable())
 
     button_row = QHBoxLayout()
     button_row.addWidget(QPushButton("Add Axis"))
@@ -46,6 +59,11 @@ def _axes_group() -> tuple[QGroupBox, AxisTable, QPushButton]:
 
     group.setLayout(layout)
     return group, axis_table, save_button
+    button_row.addWidget(QPushButton("Save Config"))
+    layout.addLayout(button_row)
+
+    group.setLayout(layout)
+    return group
 
 
 def _structure_group() -> QGroupBox:
@@ -85,3 +103,9 @@ class MachineTab(QWidget):
 
     def get_axis_configuration(self) -> list[dict[str, str | bool]]:
         return self.axis_table.get_axis_config()
+        layout = QVBoxLayout()
+        layout.addWidget(_dimensions_group())
+        layout.addWidget(_axes_group())
+        layout.addWidget(_structure_group())
+        layout.addStretch()
+        self.setLayout(layout)

@@ -125,9 +125,6 @@ class MachineController(QObject):
         self.simulation_stopped.emit()
         self.simulation_progress.emit(0, len(self._gcode_lines))
 
-    def is_simulation_running(self) -> bool:
-        return self._simulation_timer.isActive()
-
     def _advance_simulation(self) -> None:
         total = len(self._gcode_lines)
         if self._simulation_current >= total:
