@@ -18,7 +18,6 @@ from ..widgets.tool_library import ToolLibrary
 
 
 def _library_group() -> tuple[QGroupBox, ToolLibrary]:
-def _library_group() -> QGroupBox:
     group = QGroupBox("Tool Library")
     layout = QVBoxLayout()
     search = QLineEdit()
@@ -26,7 +25,6 @@ def _library_group() -> QGroupBox:
     layout.addWidget(search)
     tool_list = ToolLibrary()
     layout.addWidget(tool_list)
-    layout.addWidget(ToolLibrary())
 
     button_row = QHBoxLayout()
     button_row.addWidget(QPushButton("Create New"))
@@ -48,10 +46,6 @@ def _parameters_group() -> tuple[
     QSpinBox,
     QPushButton,
 ]:
-    return group
-
-
-def _parameters_group() -> QGroupBox:
     group = QGroupBox("Tool Parameters")
     layout = QVBoxLayout()
     layout.addWidget(PreviewWidget(title="Tool Preview", subtitle=""))
@@ -94,7 +88,6 @@ def _parameters_group() -> QGroupBox:
     button_row = QHBoxLayout()
     apply_button = QPushButton("Apply")
     button_row.addWidget(apply_button)
-    button_row.addWidget(QPushButton("Apply"))
     button_row.addWidget(QPushButton("Save to Library"))
     layout.addLayout(button_row)
 
@@ -109,7 +102,6 @@ def _parameters_group() -> QGroupBox:
         flutes,
         apply_button,
     )
-    return group
 
 
 class ToolTab(QWidget):
@@ -144,8 +136,3 @@ class ToolTab(QWidget):
             "shank": self.shank.value(),
             "flutes": self.flutes.value(),
         }
-        layout = QVBoxLayout()
-        layout.addWidget(_library_group())
-        layout.addWidget(_parameters_group())
-        layout.addStretch()
-        self.setLayout(layout)
