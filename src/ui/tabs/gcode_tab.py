@@ -23,6 +23,7 @@ def _editor_group() -> tuple[
     QPushButton,
     GCodeEditor,
 ]:
+def _editor_group() -> QGroupBox:
     group = QGroupBox("Editor")
     layout = QVBoxLayout()
 
@@ -60,6 +61,19 @@ def _simulation_group() -> tuple[
     QPushButton,
     QSlider,
 ]:
+    layout.addWidget(GCodeEditor())
+
+    button_row = QHBoxLayout()
+    button_row.addWidget(QPushButton("Load File"))
+    button_row.addWidget(QPushButton("Save"))
+    button_row.addWidget(QPushButton("Validate"))
+    layout.addLayout(button_row)
+
+    group.setLayout(layout)
+    return group
+
+
+def _simulation_group() -> QGroupBox:
     group = QGroupBox("Simulation Control")
     layout = QVBoxLayout()
 
@@ -78,6 +92,9 @@ def _simulation_group() -> tuple[
     button_row.addWidget(start_button)
     button_row.addWidget(pause_button)
     button_row.addWidget(stop_button)
+    button_row.addWidget(QPushButton("Start"))
+    button_row.addWidget(QPushButton("Pause"))
+    button_row.addWidget(QPushButton("Stop"))
     layout.addLayout(button_row)
 
     progress_row = QHBoxLayout()
@@ -97,6 +114,7 @@ def _simulation_group() -> tuple[
 
     group.setLayout(layout)
     return group, speed_slider, start_button, pause_button, stop_button, progress_slider
+    return group
 
 
 class GCodeTab(QWidget):
@@ -136,3 +154,8 @@ class GCodeTab(QWidget):
     def set_progress(self, current: int, total: int) -> None:
         self.progress_slider.setMaximum(max(total, 1))
         self.progress_slider.setValue(current)
+        layout = QVBoxLayout()
+        layout.addWidget(_editor_group())
+        layout.addWidget(_simulation_group())
+        layout.addStretch()
+        self.setLayout(layout)

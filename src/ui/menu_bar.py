@@ -66,6 +66,56 @@ def build_menu_bar(window: QMainWindow) -> dict[str, QAction]:
         _action(window, "Exit", "Exit the application", "Ctrl+Q"),
     )
     file_menu.addAction(exit_action)
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "new_project",
+            _action(window, "New Simulation", "Create a new simulation", "Ctrl+N"),
+        )
+    )
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "open_project",
+            _action(window, "Open Project", "Open a CNC project", "Ctrl+O"),
+        )
+    )
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "save_project",
+            _action(window, "Save Project", "Save the current project", "Ctrl+S"),
+        )
+    )
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "save_as",
+            _action(window, "Save As", "Save as a new project file", "Ctrl+Shift+S"),
+        )
+    )
+    file_menu.addSeparator()
+    file_menu.addAction(_action(window, "Recent Files", "View recent projects"))
+    file_menu.addSeparator()
+    file_menu.addAction(
+        _register_action(
+            actions,
+            "exit",
+            _action(window, "Exit", "Exit the application", "Ctrl+Q"),
+        )
+    )
+def build_menu_bar(window: QMainWindow) -> None:
+    menu_bar = window.menuBar()
+
+    file_menu = menu_bar.addMenu("File")
+    file_menu.addAction(_action(window, "New Simulation", "Create a new simulation", "Ctrl+N"))
+    file_menu.addAction(_action(window, "Open Project", "Open a CNC project", "Ctrl+O"))
+    file_menu.addAction(_action(window, "Save Project", "Save the current project", "Ctrl+S"))
+    file_menu.addAction(_action(window, "Save As", "Save as a new project file", "Ctrl+Shift+S"))
+    file_menu.addSeparator()
+    file_menu.addAction(_action(window, "Recent Files", "View recent projects"))
+    file_menu.addSeparator()
+    file_menu.addAction(_action(window, "Exit", "Exit the application", "Ctrl+Q"))
 
     edit_menu = menu_bar.addMenu("Edit")
     edit_menu.addAction(_action(window, "Preferences", "Open application preferences"))
@@ -100,6 +150,24 @@ def build_menu_bar(window: QMainWindow) -> dict[str, QAction]:
         _action(window, "Stop", "Stop simulation", "Ctrl+Space"),
     )
     simulation_menu.addAction(stop_sim)
+    simulation_menu.addAction(
+        _register_action(
+            actions,
+            "play_pause",
+            _action(window, "Play/Pause", "Start or pause simulation", "Space"),
+        )
+    )
+    simulation_menu.addAction(
+        _register_action(
+            actions,
+            "stop_sim",
+            _action(window, "Stop", "Stop simulation", "Ctrl+Space"),
+        )
+        _action(window, "Play/Pause", "Start or pause simulation", "Space")
+    )
+    simulation_menu.addAction(
+        _action(window, "Stop", "Stop simulation", "Ctrl+Space")
+    )
     simulation_menu.addAction(_action(window, "Step Forward", "Advance one step", "]"))
     simulation_menu.addAction(_action(window, "Step Backward", "Go back one step", "["))
     simulation_menu.addAction(_action(window, "Set Speed", "Adjust playback speed"))

@@ -24,6 +24,9 @@ def _dimensions_group() -> tuple[
     group = QGroupBox("Dimensions & Material")
     form = QFormLayout()
     fields: dict[str, QDoubleSpinBox] = {}
+def _dimensions_group() -> QGroupBox:
+    group = QGroupBox("Dimensions & Material")
+    form = QFormLayout()
     for label, value in (("Width", 200.0), ("Height", 100.0), ("Depth", 50.0)):
         spin = QDoubleSpinBox()
         spin.setRange(1.0, 2000.0)
@@ -50,6 +53,12 @@ def _position_group() -> tuple[QGroupBox, dict[str, QSlider]]:
     group = QGroupBox("Position")
     layout = QVBoxLayout()
     sliders: dict[str, QSlider] = {}
+    return group
+
+
+def _position_group() -> QGroupBox:
+    group = QGroupBox("Position")
+    layout = QVBoxLayout()
 
     for axis in ("X", "Y", "Z"):
         row = QHBoxLayout()
@@ -77,6 +86,20 @@ def _import_group() -> tuple[QGroupBox, QPushButton, QPushButton, QPushButton]:
     layout.addWidget(reset_button)
     group.setLayout(layout)
     return group, import_button, export_button, reset_button
+        layout.addLayout(row)
+
+    group.setLayout(layout)
+    return group
+
+
+def _import_group() -> QGroupBox:
+    group = QGroupBox("Import / Export")
+    layout = QHBoxLayout()
+    layout.addWidget(QPushButton("Import STL"))
+    layout.addWidget(QPushButton("Export as STL"))
+    layout.addWidget(QPushButton("Reset Workpiece"))
+    group.setLayout(layout)
+    return group
 
 
 class WorkpieceTab(QWidget):
@@ -108,3 +131,9 @@ class WorkpieceTab(QWidget):
             "zero_point": self.zero_combo.currentText(),
             "position": {axis: slider.value() for axis, slider in self.position_sliders.items()},
         }
+        layout = QVBoxLayout()
+        layout.addWidget(_dimensions_group())
+        layout.addWidget(_position_group())
+        layout.addWidget(_import_group())
+        layout.addStretch()
+        self.setLayout(layout)
