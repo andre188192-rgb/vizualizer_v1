@@ -153,6 +153,9 @@ class GLWidget(QOpenGLWidget):
         self._draw_box(800, 500, 60)
 
         glPushMatrix()
+        glTranslatef(0, y, 0)
+
+        glPushMatrix()
         glTranslatef(-300, 0, 60)
         glPushMatrix()
         glTranslatef(0, y, 0)
