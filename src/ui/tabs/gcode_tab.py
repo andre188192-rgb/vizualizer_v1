@@ -1,5 +1,6 @@
 """G-code control tab."""
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
@@ -10,7 +11,6 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PyQt5.QtCore import Qt
 
 from ..widgets.gcode_editor import GCodeEditor
 
@@ -23,7 +23,6 @@ def _editor_group() -> tuple[
     QPushButton,
     GCodeEditor,
 ]:
-def _editor_group() -> QGroupBox:
     group = QGroupBox("Editor")
     layout = QVBoxLayout()
 
@@ -61,24 +60,12 @@ def _simulation_group() -> tuple[
     QPushButton,
     QSlider,
 ]:
-    layout.addWidget(GCodeEditor())
-
-    button_row = QHBoxLayout()
-    button_row.addWidget(QPushButton("Load File"))
-    button_row.addWidget(QPushButton("Save"))
-    button_row.addWidget(QPushButton("Validate"))
-    layout.addLayout(button_row)
-
-    group.setLayout(layout)
-    return group
-
-
-def _simulation_group() -> QGroupBox:
     group = QGroupBox("Simulation Control")
     layout = QVBoxLayout()
 
     speed_row = QHBoxLayout()
-    speed_row.addWidget(QLabel("Speed: 1.0x"))
+    speed_label = QLabel("Speed: 1.0x")
+    speed_row.addWidget(speed_label)
     speed_slider = QSlider(Qt.Horizontal)
     speed_slider.setMinimum(1)
     speed_slider.setMaximum(200)
@@ -92,29 +79,23 @@ def _simulation_group() -> QGroupBox:
     button_row.addWidget(start_button)
     button_row.addWidget(pause_button)
     button_row.addWidget(stop_button)
-    button_row.addWidget(QPushButton("Start"))
-    button_row.addWidget(QPushButton("Pause"))
-    button_row.addWidget(QPushButton("Stop"))
     layout.addLayout(button_row)
 
     progress_row = QHBoxLayout()
-    progress_row.addWidget(QLabel("Current line: 120/450"))
+    progress_row.addWidget(QLabel("Current line: 0/0"))
     progress_slider = QSlider(Qt.Horizontal)
     progress_slider.setMinimum(0)
-    progress_slider.setMaximum(450)
+    progress_slider.setMaximum(0)
     progress_row.addWidget(progress_slider)
     layout.addLayout(progress_row)
 
     step_row = QHBoxLayout()
     step_row.addWidget(QPushButton("Step +"))
     step_row.addWidget(QPushButton("Step -"))
-    step_row.addWidget(QPushButton("Step Forward"))
-    step_row.addWidget(QPushButton("Step Back"))
     layout.addLayout(step_row)
 
     group.setLayout(layout)
     return group, speed_slider, start_button, pause_button, stop_button, progress_slider
-    return group
 
 
 class GCodeTab(QWidget):
@@ -154,8 +135,3 @@ class GCodeTab(QWidget):
     def set_progress(self, current: int, total: int) -> None:
         self.progress_slider.setMaximum(max(total, 1))
         self.progress_slider.setValue(current)
-        layout = QVBoxLayout()
-        layout.addWidget(_editor_group())
-        layout.addWidget(_simulation_group())
-        layout.addStretch()
-        self.setLayout(layout)

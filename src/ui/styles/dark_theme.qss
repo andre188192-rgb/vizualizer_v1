@@ -77,6 +77,22 @@ QPushButton:pressed {
     background-color: #295fc2;
 }
 
+QToolButton {
+    background-color: #2a2c34;
+    color: #f0f0f0;
+    border: 1px solid #3a3d48;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+QToolButton:hover {
+    background-color: #3a3d48;
+}
+
+QToolButton:pressed {
+    background-color: #2a2c34;
+}
+
 QLineEdit, QPlainTextEdit, QTableWidget, QListWidget, QComboBox, QSpinBox, QDoubleSpinBox {
     background-color: #1b1c22;
     color: #f0f0f0;
