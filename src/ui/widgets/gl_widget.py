@@ -65,6 +65,7 @@ class GLWidget(QOpenGLWidget):
 
     def paintGL(self) -> None:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
         eye_x, eye_y, eye_z = self._camera_position()
