@@ -65,6 +65,7 @@ class GLWidget(QOpenGLWidget):
 
     def paintGL(self) -> None:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
         eye_x, eye_y, eye_z = self._camera_position()
@@ -144,45 +145,67 @@ class GLWidget(QOpenGLWidget):
         glVertex3f(w, -d, h)
         glEnd()
 
+    def _draw_box_at(self, x: float, y: float, z: float, width: float, depth: float, height: float) -> None:
+        w = width / 2
+        d = depth / 2
+        h = height
+        glBegin(GL_QUADS)
+        glVertex3f(x - w, y - d, z)
+        glVertex3f(x + w, y - d, z)
+        glVertex3f(x + w, y + d, z)
+        glVertex3f(x - w, y + d, z)
+
+        glVertex3f(x - w, y - d, z + h)
+        glVertex3f(x + w, y - d, z + h)
+        glVertex3f(x + w, y + d, z + h)
+        glVertex3f(x - w, y + d, z + h)
+
+        glVertex3f(x - w, y - d, z)
+        glVertex3f(x + w, y - d, z)
+        glVertex3f(x + w, y - d, z + h)
+        glVertex3f(x - w, y - d, z + h)
+
+        glVertex3f(x - w, y + d, z)
+        glVertex3f(x + w, y + d, z)
+        glVertex3f(x + w, y + d, z + h)
+        glVertex3f(x - w, y + d, z + h)
+
+        glVertex3f(x - w, y - d, z)
+        glVertex3f(x - w, y + d, z)
+        glVertex3f(x - w, y + d, z + h)
+        glVertex3f(x - w, y - d, z + h)
+
+        glVertex3f(x + w, y - d, z)
+        glVertex3f(x + w, y + d, z)
+        glVertex3f(x + w, y + d, z + h)
+        glVertex3f(x + w, y - d, z + h)
+        glEnd()
+
     def _draw_machine(self) -> None:
         x = self._axis_positions["X"]
         y = self._axis_positions["Y"]
         z = self._axis_positions["Z"]
 
         glColor3f(0.3, 0.32, 0.36)
-        self._draw_box(800, 500, 60)
+        self._draw_box_at(0, 0, 0, 800, 500, 60)
 
-        glPushMatrix()
-        glTranslatef(-300, 0, 60)
         glColor3f(0.35, 0.36, 0.4)
-        self._draw_box(120, 120, 300)
-        glPopMatrix()
+        self._draw_box_at(-300, y, 60, 120, 120, 300)
 
-        glPushMatrix()
-        glTranslatef(300, 0, 60)
         glColor3f(0.35, 0.36, 0.4)
-        self._draw_box(120, 120, 300)
-        glPopMatrix()
+        self._draw_box_at(300, y, 60, 120, 120, 300)
 
-        glPushMatrix()
-        glTranslatef(0, 0, 340)
         glColor3f(0.4, 0.42, 0.46)
-        self._draw_box(720, 140, 80)
-        glPopMatrix()
+        self._draw_box_at(0, y, 340, 720, 140, 80)
 
-        glPushMatrix()
-        glTranslatef(x, 0, 380)
         glColor3f(0.25, 0.5, 0.7)
-        self._draw_box(200, 160, 80)
+        self._draw_box_at(x, y, 380, 200, 160, 80)
 
-        glTranslatef(0, y, 80)
         glColor3f(0.25, 0.6, 0.6)
-        self._draw_box(180, 140, 60)
+        self._draw_box_at(x, y, 460, 180, 140, 60)
 
-        glTranslatef(0, 0, -z)
         glColor3f(0.8, 0.4, 0.3)
-        self._draw_box(60, 60, 180)
-        glPopMatrix()
+        self._draw_box_at(x, y, 460 - z, 60, 60, 180)
 
     def mousePressEvent(self, event) -> None:
         self._last_pos = event.pos()

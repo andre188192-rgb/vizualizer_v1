@@ -139,19 +139,44 @@ class MachineController(QObject):
         if self._simulation_current >= total:
             self.stop_simulation()
             return
+        line = self._gcode_lines[self._simulation_current]
+        self._apply_gcode_line(line)
         self._simulation_current += 1
         self.simulation_progress.emit(self._simulation_current, total)
         self._emit_machine_state()
 
     def _emit_machine_state(self) -> None:
-        positions = {axis.name: self._axis_positions.get(axis.name, 0.0) for axis in self._axis_config if axis.active}
-        for axis, value in self._axis_positions.items():
-            positions.setdefault(axis, value)
-        positions = {axis.name: 0.0 for axis in self._axis_config if axis.active}
-        positions.setdefault("X", 0.0)
-        positions.setdefault("Y", 0.0)
-        positions.setdefault("Z", 0.0)
+        positions = dict(self._axis_positions)
+        for axis in self._axis_config:
+            if not axis.active:
+                positions.pop(axis.name, None)
+            else:
+                positions.setdefault(axis.name, 0.0)
+        if not positions:
+            positions = {"X": 0.0, "Y": 0.0, "Z": 0.0}
         self.machine_state_changed.emit(positions)
 
     def current_gcode(self) -> str:
         return "\n".join(self._gcode_lines)
+
+    def _apply_gcode_line(self, line: str) -> None:
+        cleaned = line.split(";")[0].strip()
+        if not cleaned:
+            return
+        if "(" in cleaned and ")" in cleaned:
+            cleaned = cleaned.split("(")[0].strip()
+        if not cleaned:
+            return
+        parts = cleaned.upper().split()
+        if not any(part.startswith(("G0", "G00", "G1", "G01")) for part in parts):
+            return
+        for part in parts:
+            try:
+                if part.startswith("X"):
+                    self._axis_positions["X"] = float(part[1:])
+                elif part.startswith("Y"):
+                    self._axis_positions["Y"] = float(part[1:])
+                elif part.startswith("Z"):
+                    self._axis_positions["Z"] = float(part[1:])
+            except ValueError:
+                continue
