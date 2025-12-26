@@ -154,6 +154,11 @@ class GLWidget(QOpenGLWidget):
 
         glPushMatrix()
         glTranslatef(-300, 0, 60)
+        glPushMatrix()
+        glTranslatef(0, y, 0)
+
+        glPushMatrix()
+        glTranslatef(-300, 0, 60)
         glColor3f(0.35, 0.36, 0.4)
         self._draw_box(120, 120, 300)
         glPopMatrix()
@@ -175,13 +180,14 @@ class GLWidget(QOpenGLWidget):
         glColor3f(0.25, 0.5, 0.7)
         self._draw_box(200, 160, 80)
 
-        glTranslatef(0, y, 80)
+        glTranslatef(0, 0, 80)
         glColor3f(0.25, 0.6, 0.6)
         self._draw_box(180, 140, 60)
 
         glTranslatef(0, 0, -z)
         glColor3f(0.8, 0.4, 0.3)
         self._draw_box(60, 60, 180)
+        glPopMatrix()
         glPopMatrix()
 
     def mousePressEvent(self, event) -> None:

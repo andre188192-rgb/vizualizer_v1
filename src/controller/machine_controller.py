@@ -139,6 +139,8 @@ class MachineController(QObject):
         if self._simulation_current >= total:
             self.stop_simulation()
             return
+        line = self._gcode_lines[self._simulation_current]
+        self._apply_gcode_line(line)
         self._simulation_current += 1
         self.simulation_progress.emit(self._simulation_current, total)
         self._emit_machine_state()
@@ -156,3 +158,25 @@ class MachineController(QObject):
 
     def current_gcode(self) -> str:
         return "\n".join(self._gcode_lines)
+
+    def _apply_gcode_line(self, line: str) -> None:
+        cleaned = line.split(";")[0].strip()
+        if not cleaned:
+            return
+        if "(" in cleaned and ")" in cleaned:
+            cleaned = cleaned.split("(")[0].strip()
+        if not cleaned:
+            return
+        parts = cleaned.upper().split()
+        if not any(part.startswith(("G0", "G00", "G1", "G01")) for part in parts):
+            return
+        for part in parts:
+            try:
+                if part.startswith("X"):
+                    self._axis_positions["X"] = float(part[1:])
+                elif part.startswith("Y"):
+                    self._axis_positions["Y"] = float(part[1:])
+                elif part.startswith("Z"):
+                    self._axis_positions["Z"] = float(part[1:])
+            except ValueError:
+                continue
