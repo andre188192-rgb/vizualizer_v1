@@ -1,3 +1,6 @@
 numpy
 PyQt5
 PyOpenGL
+flask
+flask-cors
+websockets
