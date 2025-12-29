@@ -19,6 +19,11 @@ EVENT_LOOP: asyncio.AbstractEventLoop | None = None
 STATE = {"status": "stopped"}
 
 
+def parse_gcode_payload(gcode_text: str) -> Dict[str, Any]:
+    parser = GCodeParser()
+    return parser.parse_to_json(gcode_text)
+
+
 async def register_client(websocket: websockets.WebSocketServerProtocol) -> None:
     async with CONNECTED_LOCK:
         CONNECTED.add(websocket)
@@ -64,6 +69,9 @@ async def handle_message(message: str) -> None:
 
 
 async def websocket_handler(websocket: websockets.WebSocketServerProtocol, path: str) -> None:
+    if path != "/ws":
+        await websocket.close(code=1008, reason="Unsupported WebSocket endpoint")
+        return
     await register_client(websocket)
     try:
         await websocket.send(json.dumps({"type": "status", "data": STATE["status"]}))
@@ -79,6 +87,18 @@ def create_app() -> Flask:
     app = Flask(__name__)
     CORS(app)
 
+    @app.post("/upload")
+    def upload_gcode():
+        if "file" not in request.files:
+            return jsonify({"error": "Missing file upload."}), 400
+        file_storage = request.files["file"]
+        gcode_text = file_storage.read().decode("utf-8", errors="ignore")
+        result = parse_gcode_payload(gcode_text)
+        message = {"type": "gcode_data", "data": result}
+        if EVENT_LOOP is not None:
+            asyncio.run_coroutine_threadsafe(broadcast(message), EVENT_LOOP)
+        return jsonify({"ok": True, "commands": result["metadata"]["total_commands"]})
+
     @app.post("/api/send-gcode")
     def send_gcode():
         payload = request.get_json(silent=True) or {}
@@ -86,8 +106,7 @@ def create_app() -> Flask:
         if not gcode_text:
             return jsonify({"error": "Missing 'gcode' payload."}), 400
 
-        parser = GCodeParser()
-        result = parser.parse_to_json(gcode_text)
+        result = parse_gcode_payload(gcode_text)
         message = {"type": "gcode_data", "data": result}
         if EVENT_LOOP is not None:
             asyncio.run_coroutine_threadsafe(broadcast(message), EVENT_LOOP)
@@ -102,7 +121,7 @@ def run_flask(app: Flask, host: str, port: int) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="WebSocket bridge for Vizualizer.")
+    parser = argparse.ArgumentParser(description="Vizualizer HTTP/WebSocket bridge.")
     parser.add_argument("--ws-host", default="0.0.0.0", help="WebSocket host")
     parser.add_argument("--ws-port", type=int, default=8765, help="WebSocket port")
     parser.add_argument("--http-host", default="0.0.0.0", help="HTTP host for Flask")
